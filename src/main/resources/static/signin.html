@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="alert alert-danger" ng-show="error">
+    用户名或密码错误，请重新输入
+  </div>
+  <form class="form-signin" role="form" ng-submit="controller.login()">
+    <h2 class="form-signin-heading">请输入</h2>
+    <label for="username" class="sr-only">用户名</label>
+    <input  ng-model="controller.credentials.username" type="text" id="username" class="form-control" placeholder="用户名" required autofocus>
+    <label for="inputPassword" class="sr-only">密码</label>
+    <input ng-model="controller.credentials.password" type="password" id="inputPassword" class="form-control" placeholder="密码" required>
+    <div class="checkbox">
+      <!--<label>-->
+        <!--<input type="checkbox" value="remember-me"> 保存-->
+      <!--</label>-->
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+  </form>
+</div> <!-- /container -->

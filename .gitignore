@@ -1,6 +1,12 @@
+mvnw
+mvnw.*
+LICENSE
+*.log
+*.mvn
 target
 .git
 logs
 log
 .idea
 *.iml
+*.sh
