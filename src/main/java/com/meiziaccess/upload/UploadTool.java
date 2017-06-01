@@ -40,7 +40,7 @@ public class UploadTool implements UploadToolInterface {
     /****************************************/
 
 
-
+    //判断系统
     @Override
     public String getOSName() {
         Properties props = System.getProperties();
@@ -49,7 +49,7 @@ public class UploadTool implements UploadToolInterface {
     }
 
 
-
+    //检查文件夹是否为空
     @Override
     public boolean checkFolder(String floderPath) {
         //??????
@@ -69,8 +69,7 @@ public class UploadTool implements UploadToolInterface {
     }
 
     /**
-     * ???????????????????????????????????
-     * ?????????
+     * 读取上架文件
      */
     public  Map<String, String> readFile(String fileName)  {
         Map<String, String> map = new HashMap<String, String>();
@@ -105,7 +104,7 @@ public class UploadTool implements UploadToolInterface {
         return map;
     }
 
-
+    //读取文件夹中的编目,素材文件列表和上架信息，修改数据库内容
     public boolean updateDatabase_total(String folderPath, String xmlName, String videoName, UploadLogRepository uploadLogRepository,
                                   String upload_remote_path,String upload_vendor_name, String uploader_name, String vendor_path,
                                   String trans_path, String play_path, List<String> frames) {
@@ -155,6 +154,7 @@ public class UploadTool implements UploadToolInterface {
                                     "",
                                     0,
                                     false,
+                                    "",
                                     "");
         //xml??????
         log.setXml_trans_path(trans_path + "/" +"trans_"+new Date().getTime()+"_"+xmlName);
@@ -500,6 +500,8 @@ public class UploadTool implements UploadToolInterface {
 
         String md5 = item.getMd5();
 
+        String title = item.getTitle();
+
         for (int i = 0; i < tempList.length; i++) {
             if (tempList[i].isFile()) {
                 try {
@@ -526,7 +528,7 @@ public class UploadTool implements UploadToolInterface {
 
         //????????
         updateDatabase( xmlName, videoName, uploadLogRepository,  remotePath,
-                upload_vendor_name,  uploader_name,  vendorPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5);
+                upload_vendor_name,  uploader_name,  vendorPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5, title);
         return true;
     }
 
@@ -611,6 +613,8 @@ public class UploadTool implements UploadToolInterface {
 
         String md5 = item.getMd5();
 
+        String title = item.getTitle();
+
         String keyFramePath = "";
         if (paths.length == 4){
             keyFramePath = paths[3];
@@ -662,7 +666,7 @@ public class UploadTool implements UploadToolInterface {
 
         //只支持单个xml，关键帧，低码文件对应
         updateDatabase( xmlName, videoName, uploadLogRepository,  remotePath,
-                upload_vendor_name,  uploader_name,  highCodeVideoPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5);
+                upload_vendor_name,  uploader_name,  highCodeVideoPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5, title);
         return true;
     }
 
@@ -682,12 +686,13 @@ public class UploadTool implements UploadToolInterface {
      * @param status                审核状态
      * @param on_shelf              上架状态
      * @param md5
+     * @param title
      * @return
      */
     public boolean updateDatabase(List<String> xmlName, String videoName, UploadLogRepository uploadLogRepository,
                                   String upload_remote_path,String upload_vendor_name, String uploader_name, String vendor_path,
                                   String trans_path, String play_path, UploadItem item, String remoteKeyFramesPath, int status,
-                                  boolean on_shelf, String md5) {
+                                  boolean on_shelf, String md5, String title) {
 
         String xmlOriginName = xmlName.get(0);
         //xml
@@ -754,7 +759,8 @@ public class UploadTool implements UploadToolInterface {
                 material_type,
                 status,
                 on_shelf,
-                md5
+                md5,
+                title
         );
         log.setXml_trans_path(trans_path + "/" +"trans_"+new Date().getTime()+"_"+xmlOriginName);
 

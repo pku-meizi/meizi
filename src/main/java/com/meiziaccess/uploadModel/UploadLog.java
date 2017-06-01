@@ -17,7 +17,7 @@ public class UploadLog {
     public UploadLog(String vendor_name, Date upload_time, String uploader_name,
                      String xml_upload_path, String video_upload_path, String vendor_path,
                      double video_price, String video_copyright, int video_price_type, int video_copyright_duration,
-                     String frame_extract_path, String material_type, int status, boolean on_shelf, String md5) {
+                     String frame_extract_path, String material_type, int status, boolean on_shelf, String md5, String title) {
         this.vendor_name = vendor_name;
         this.upload_time = upload_time;
         this.uploader_name = uploader_name;
@@ -33,6 +33,7 @@ public class UploadLog {
         this.status = status;
         this.on_shelf = on_shelf;
         this.md5 = md5;
+        this.title = title;
     }
 
 
@@ -101,6 +102,16 @@ public class UploadLog {
     @Column(name = "md5")
     private String md5;
 
+    @Column(name = "title")
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public int getLog_id() {
         return log_id;
