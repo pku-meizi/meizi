@@ -15,10 +15,9 @@ public interface OrderRepository extends JpaRepository<ItemOrder,Long>{
 
     List<ItemOrder> findOrderByOrderid(Long orderid);
 
-
     @Modifying
     @Transactional
-    @Query("update ItemOrder o set o.trans_path=?1")
-    String upTans_path (String trans_path);
+    @Query("update ItemOrder o set o.status=?1 where o.orderid=?2")
+    int setStatus (Integer status, Long orderid);
 
 }

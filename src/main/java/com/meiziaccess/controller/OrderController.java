@@ -56,7 +56,7 @@ public class OrderController {
          ItemOrder order = new ItemOrder();
          if(o_list.isEmpty()){
              //生成order表中的URL
-             String o_url = "http://" + IPAddress + "/mediaAll?orderid=" + item.getOrderid();
+             String o_url = "http://" + IPAddress + "/get_order?orderid=" + item.getOrderid();
              //添加order表中的记录
              order.setOrderid(item.getOrderid());
              order.setUrl(o_url);
@@ -70,7 +70,7 @@ public class OrderController {
              orderRepository.save(order);
 
              //生成item表中的URL
-             String i_url = "http://" + IPAddress + "/media?uuid=" + item.getUuid();
+             String i_url = "http://" + IPAddress + "/get_item?orderid=" + item.getOrderid()+"&&uuid="+item.getUuid();
              item.setUrl(i_url);
              //设置成0，表示还未完成转码
              item.setStatus(0);
@@ -88,14 +88,14 @@ public class OrderController {
 
                 if(i_o_list.get(j).getUuid()==item.getUuid()){
                     mag = 0;
-                    order_return.put("uuid", item.getUuid());
-                    order_return.put("status", item.getStatus());
-                    order_return.put("url", item.getUrl());
+                    order_return.put("uuid", i_o_list.get(j).getUuid());
+                    order_return.put("status", i_o_list.get(j).getStatus());
+                    order_return.put("url", i_o_list.get(j).getUrl());
                     break;
                 }
              }
              if(mag == 1){
-                 String i_url = "http://" + IPAddress + "/media?uuid=" + item.getUuid();
+                 String i_url = "http://" + IPAddress + "/get_item?orderid=" + item.getOrderid()+"&&uuid="+item.getUuid();
                  item.setUrl(i_url);
                  //设置成0，表示还未完成转码
                  item.setStatus(0);
@@ -169,7 +169,6 @@ public class OrderController {
         }else {
             //如果有订单
             ItemOrder order = o_list.get(0);
-            System.out.println("@"+order+"@");
             //查看order表中的status状态
             int o_status = order.getStatus();
             System.out.println("@"+o_status+"@");
@@ -184,8 +183,6 @@ public class OrderController {
                     for (int j = 0; j < i_list.size(); j++) {
                         //判断item中的status的状态是否全部为1
                         int i_status = i_list.get(j).getStatus();
-//                        System.out.println("1执行###########"+i_status);
-                        System.out.println(i_list.get(j).getOrderid() + " " + i_list.get(j).getUuid() + " " + i_status);
                         if (i_status == 0) {
                             flag = 0;
                             break;
@@ -194,8 +191,8 @@ public class OrderController {
                     if (flag == 1) {
                        order.setStatus(flag);
                         System.out.println("执行###########"+order.getStatus());
-
-                        orderRepository.save(post_order);
+                        //跟新status
+                        orderRepository.setStatus(order.getStatus(), order.getOrderid());
                     }
                     order_return.put("orderid", order.getOrderid());
                     order_return.put("status", order.getStatus());
@@ -230,12 +227,12 @@ public class OrderController {
 
     //视频订单项下载链接
     @RequestMapping(value = "/get_item", method = RequestMethod.GET)
-    public ResponseEntity downloadFile( Long uuid)
+    public ResponseEntity downloadFile( Long orderid, Long uuid)
             throws IOException {
         //生成相应的文件下载链接
 
 //        通过uuid查找高码视频路径
-        List<ItemMedia> i_list = itemMediaRepository.findMediaByUuid(uuid);
+        List<ItemMedia> i_list = itemMediaRepository.findMediaByUuidAndOrderid(orderid, uuid);
 
         //如果没有uuid，则提示没有该订单项
         if(i_list.isEmpty()){
