@@ -266,9 +266,10 @@ public class OrderController {
 
         ItemMedia itemMedia = i_list.get(0);
         String filePath = "";
-
+        List<ItemOrder> o_list = orderRepository.findOrderByOrderid(orderid);
+        ItemOrder itemOrder = o_list.get(0);
         //查看转码状态，如果完成就返回，否则提示转码未完成
-        if(itemMedia.getStatus()==1){
+        if(itemOrder.getStatus()==2){
             filePath = itemMedia.getOrder_video_path();
             System.out.println(filePath);
 
