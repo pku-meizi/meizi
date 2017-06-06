@@ -14,8 +14,9 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-        $('#upload_data').DataTable({
+        var table =  $('#upload_data').DataTable({
             ajax: "http://61.48.40.126:9921/end_data",
+ //           ajax: "http://localhost:8080/end_data",
             columns: [
                 {data: 'del'},
                 {data: 'title'},
@@ -98,17 +99,45 @@
 
                 },
             ],
+            order: [
+                [0, null]
+            ],
+            paging: false
         });
-        $('#del').click(function () {
+
+        //全选
+        $('input.checkAll').on('click', function() {
+            alert("皮卡丘");
+            if ($(this).prop("checked") == true) {
+
+                $("input[name='checkItem']").prop("checked", $(this).prop("checked"));
+                $('#upload_data tbody tr').addClass('selected');
+            } else {
+//                $("input").iCheck('uncheck');
+                $("input[name='checkItem']").prop("checked", false);
+                $('#upload_data tbody tr').removeClass('selected');
+            }
+        });
+        //单选
+        $('#upload_data tbody').on('click', 'tr input[name="checkItem"]', function () {
+            var $tr = $(this).parents('tr');
+            $tr.toggleClass('selected');
+            var $tmp = $('[name=checkItem]:checkbox');
+            $('#checkAll').prop('checked', $tmp.length == $tmp.filter(':checked').length);
+        });
+
+        $('#dele').click(function () {
             var rows = table.rows('.selected');
+
             if(rows.data().length == 0){
                 alert("请选择删除的视频");
                 return false;
             }
+            alert("选好视频了");
             var isOk = 0;
             var num = rows.data().length;
             alert("正在删除,请稍后");
-            $('#del').prop('disabled', true);
+            $('#dele').prop('disabled', true);
             rows.every( function ( rowIdx, tableLoop, rowLoop ) {
                 var d = this.data();
 //                console.log(d);
@@ -127,7 +156,7 @@
                         if(isOk == num){
                             alert("删除成功");
                             rows.remove().draw(false);
-                            $('#del').prop('disabled', false);
+                            $('#dele').prop('disabled', false);
                         }
 //                    $('#result').text(data.result);
                     } // 注意不要在此行增加逗号
@@ -136,6 +165,7 @@
             } );
 //            rows.remove().draw(false);
         });
+
     })
     </script>
 
@@ -161,7 +191,7 @@
         </table>
 
         <div style="text-align:center;margin:0 auto;">
-            <button class="btn btn-default" id="del" >删除</button>
+            <button class="btn btn-default" id="dele" >删除</button>
         </div>
     </div>
 <!--</nav>-->
