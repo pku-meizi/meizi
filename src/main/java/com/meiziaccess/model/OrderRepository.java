@@ -18,6 +18,6 @@ public interface OrderRepository extends JpaRepository<ItemOrder,Long>{
     @Modifying
     @Transactional
     @Query("update ItemOrder o set o.status=?1 where o.orderid=?2")
-    int setStatus (Integer status, Long orderid);
+    int setStatus (int status, Long orderid);
 
 }

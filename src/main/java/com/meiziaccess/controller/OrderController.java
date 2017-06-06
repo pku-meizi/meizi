@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,11 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Created by user-u1 on 2016/4/12.
@@ -106,53 +108,12 @@ public class OrderController {
                  order_return.put("status", itemMedia.getStatus());
                  order_return.put("url", itemMedia.getUrl());
              }
-//             List<ItemMedia> i_list = itemMediaRepository.findMediaByUuid(ord.getUuid());
-//             if (i_list.isEmpty()){
-//                 String i_url = "http://" + IPAddress + "/media?uuid=" + ord.getUuid();
-//                 ord.setUrl(i_url);
-//                 //设置成0，表示还未完成转码
-//                 ord.setStatus(0);
-//                itemMedia = itemMediaRepository.save(ord);
-//             }else {
-//                 itemMedia =i_list.get(0);
-//             }
 
          }
 
         return order_return;
 
      }
-
-//    //订单PostAPI
-//    @RequestMapping(value = "/order", method = RequestMethod.POST, produces = "application/json;charset-UTF-8")
-//    @ResponseBody
-//    public Map<String, Object> order(@RequestBody ItemMedia ord){
-//        Map<String, Object> order_return = new HashMap<String, Object>();
-//
-//        //查询该订单项是否已经处理过，已处理就直接返回url
-//        List<ItemMedia> list =  itemMediaRepository.findMediaByUuid(ord.getUuid());
-//        ItemMedia itemMedia;
-//        if(list.isEmpty()){
-//
-//            //设置生成的url
-//            String url = "http://" + IPAddress + "/media?uuid=" + ord.getUuid();
-//            ord.setUrl(url);
-//
-//            //设置成0，表示还未完成转码
-//            ord.setStatus(0);
-//
-//            itemMedia = itemMediaRepository.save(ord);
-//        }else{
-//            itemMedia = list.get(0);
-//        }
-//
-//        //返回字段
-//        order_return.put("uuid", itemMedia.getUuid());
-//        order_return.put("status", itemMedia.getStatus());
-//        order_return.put("url", itemMedia.getUrl());
-//
-//        return order_return;
-//    }
 
     //视频订单下载链接
     @RequestMapping(value = "/post_order", method = RequestMethod.POST, produces = "application/json;charset-UTF-8")
@@ -171,42 +132,105 @@ public class OrderController {
             ItemOrder order = o_list.get(0);
             //查看order表中的status状态
             int o_status = order.getStatus();
+            //查看订单中有对少订单项
+            List<ItemMedia> i_list = itemMediaRepository.findMediaByOrderid(post_order.getOrderid());
+            //存放订单项的文件夹
+            File file = new File(order.getTrans_path());
+            File[] files = file.listFiles();
+
             System.out.println("@"+o_status+"@");
             switch (o_status) {
-                //0:订单未完成  1：订单完成  2：压缩完成  3：无订单
+                //0:订单未完成  1：订单完成(转码完成)  2：压缩完成  3：无订单
 
                 case 0:
                     System.out.println("执行###########");
-                    List<ItemMedia> i_list = itemMediaRepository.findMediaByOrderid(post_order.getOrderid());
-                    System.out.println("上岛咖啡"+i_list);
-                    int flag = 1;
-                    for (int j = 0; j < i_list.size(); j++) {
-                        //判断item中的status的状态是否全部为1
-                        int i_status = i_list.get(j).getStatus();
-                        if (i_status == 0) {
-                            flag = 0;
-                            break;
+
+                    if(!file.exists()){
+                        System.out.print("没有订单文件夹");
+                    }else{
+
+                        int fileSize = files.length;
+                        if(fileSize == i_list.size()){
+                            order.setStatus(1);
+                            orderRepository.setStatus(order.getStatus(), order.getOrderid());
+                        }else {
+                            System.out.print("状态不动");
                         }
                     }
-                    if (flag == 1) {
-                       order.setStatus(flag);
-                        System.out.println("执行###########"+order.getStatus());
-                        //跟新status
-                        orderRepository.setStatus(order.getStatus(), order.getOrderid());
-                    }
+//                    int flag = 1;
+//                    for (int j = 0; j < i_list.size(); j++) {
+//                        //判断item中的status的状态是否全部为1
+//                        int i_status = i_list.get(j).getStatus();
+//                        if (i_status == 0) {
+//                            flag = 0;
+//                            break;
+//                        }
+//                    }
+//                    if (flag == 1) {
+//                       order.setStatus(flag);
+//                        System.out.println("执行###########"+order.getStatus());
+//                        //跟新status
+//                        orderRepository.setStatus(order.getStatus(), order.getOrderid());
+//                    }
                     order_return.put("orderid", order.getOrderid());
                     order_return.put("status", order.getStatus());
                     order_return.put("url", order.getUrl());
                     break;
                 case 1:
+                    System.out.print("*****做压缩操作******");
+
+                    FileInputStream fis = null;
+                    BufferedInputStream bis = null;
+                    FileOutputStream fos = null;
+                    ZipOutputStream zos = null;
+                    File zipFile = new File(order.getTrans_path() + ".zip");
+                    if(zipFile.exists()){
+                        System.out.print(order.getTrans_path() + ".zip"+"已存在");
+                    }else {
+                        try {
+
+                            fos = new FileOutputStream(zipFile);
+                            zos = new ZipOutputStream(new BufferedOutputStream(fos));
+                            byte[] bufs = new byte[1024*10];
+                            for(int i=0; i<files.length;i++){
+                                ZipEntry zipEntry = new ZipEntry(files[i].getName());
+                                zos.putNextEntry(zipEntry);
+
+                                fis = new FileInputStream(files[i]);
+                                bis = new BufferedInputStream(fis, 1024*10);
+                                int read = 0;
+                                while((read=bis.read(bufs, 0, 1024*10)) != -1){
+                                    zos.write(bufs, 0, read);
+                                }
+                            }
+                            order.setStatus(2);
+                            orderRepository.setStatus(order.getStatus(), order.getOrderid());
+
+                        }catch (FileNotFoundException e){
+                            e.printStackTrace();
+                            throw new RuntimeException(e);
+                        }catch(IOException e){
+                            e.printStackTrace();
+                            throw new RuntimeException(e);
+                        }finally{
+                            try {
+                                if(null != bis) bis.close();
+                                if(null != zos) zos.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                throw new RuntimeException(e);
+                            }
+                        }
+
+
+                    }
+
                     order_return.put("orderid", order.getOrderid());
                     order_return.put("status", order.getStatus());
                     order_return.put("url", order.getUrl());
                     break;
                 case 2:
                     String path = order.getTrans_path() + ".zip";
-                    System.out.println("*&*&*&*&&*&*&*&&*&");
-                    System.out.println(order.getTrans_path());
                     order.setPack_path(path);
                     orderRepository.save(order);
 
@@ -232,10 +256,11 @@ public class OrderController {
         //生成相应的文件下载链接
 
 //        通过uuid查找高码视频路径
-        List<ItemMedia> i_list = itemMediaRepository.findMediaByUuidAndOrderid(orderid, uuid);
-
+        List<ItemMedia> i_list = itemMediaRepository.findByOrderidAndUuid(orderid, uuid);
+        System.out.println("*****取出来了*****");
         //如果没有uuid，则提示没有该订单项
         if(i_list.isEmpty()){
+            System.out.println("*****没有值*****");
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
@@ -302,4 +327,32 @@ public class OrderController {
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(new InputStreamResource(file.getInputStream()));
     }
+/*
+*trans_path  要压缩文件夹的路径
+*
+* pack_path   压缩完成后压缩文件的路径
+*
+* order_video_path  订单高码文件存放路径
+*
+* orderName  压缩后文件的名称
+*
+*将放在trans_path路径下的文件，打包成orderID名称的zip文件，并存放在order_path中
+*
+* */
+
+//    public static boolean fileToZip(String trans_path, String order_path, String orderName){
+//        boolean flag = false;
+//        FileInputStream fis = null;
+//        BufferedInputStream bis = null;
+//        FileOutputStream fos = null;
+//        ZipOutputStream zos = null;
+//
+//        if (trans_path.isEmpty()){
+//            System.out.println("高码订单文件不存在");
+//        }else{
+//        }
+//
+//
+//        return flag;
+//    }
    }
