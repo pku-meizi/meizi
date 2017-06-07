@@ -16,7 +16,7 @@
     $(document).ready(function() {
         var table =  $('#upload_data').DataTable({
             ajax: "http://61.48.40.126:9921/end_data",
- //           ajax: "http://localhost:8080/end_data",
+ //          ajax: "http://localhost:8080/end_data",
             columns: [
                 {data: 'del'},
                 {data: 'title'},
@@ -43,9 +43,9 @@
                     "orderable":false,
                     "data":"upload_time",
                     "render": function ( data, type, full, meta) {
-                        var date = new Date();
-                        data = date.toLocaleDateString();
-                        return data;
+                        var data1 = new Date(data).toLocaleDateString();
+
+                        return data1;
                     }
                 },
                 {
