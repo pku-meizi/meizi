@@ -2,6 +2,8 @@ package com.meiziaccess.model;
 
 
 
+import org.jeecgframework.poi.excel.annotation.Excel;
+
 import javax.annotation.sql.DataSourceDefinition;
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -22,18 +24,22 @@ public class ItemMedia {
 
     //订单项ID
     @Column(name = "uuid")
+    @Excel(name = "订单号", isImportField = "uuid")
     private Long uuid;
 
     @Column(name = "isEntire")
     private Boolean isEntire;
 
     @Column(name = "starttime")
+    @Excel(name = "入点", isImportField = "starttime")
     private int starttime;
 
     @Column(name = "endtime")
+    @Excel(name = "出点", isImportField = "endtime")
     private int endtime;
 
     @Column(name = "highdef_video_path")
+    @Excel(name = "高码文件路径", isImportField = "highdef_video_path")
     private String highdef_video_path;
 
     @Column(name = "order_video_path")

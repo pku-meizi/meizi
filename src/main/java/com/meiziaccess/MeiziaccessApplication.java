@@ -12,19 +12,25 @@ import com.meiziaccess.upload.UploadToolInterface;
 import com.meiziaccess.uploadModel.UploadLogRepository;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.jeecgframework.poi.excel.ExcelExportUtil;
+import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Null;
 import java.util.*;
 import com.meiziaccess.secure.*;
+
 
 
 @SpringBootApplication
@@ -255,6 +261,15 @@ public class MeiziaccessApplication  {
 		Map<String, Object> map = new HashMap<>();
 		map.put("data",itemMedias);
 		return map;
+	}
+
+	@RequestMapping(value = "/export", method = RequestMethod.GET)
+	public void export(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setHeader("content-Type", "application/vnd.ms-excel");
+		response.setHeader("Content-Disposition", "attachment;filename="+new Date().toLocaleString()+".xls");
+		List<ItemMedia> list = itemMediaRepository.findAll();
+		Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), ItemMedia.class, list);
+		workbook.write(response.getOutputStream());
 	}
 
 }
