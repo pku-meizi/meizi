@@ -64,7 +64,7 @@ public class OrderController {
              order.setUrl(o_url);
              order.setStatus(0);
 
-             String path = order_path + order.getOrderid();      //   order\\orderid
+             String path = order_path+"/order" + order.getOrderid();      //   order\\orderid
              File file = new File(path);
              file.mkdir();
              order.setTrans_path(path);
