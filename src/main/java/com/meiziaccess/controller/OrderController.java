@@ -47,7 +47,7 @@ public class OrderController {
     private String order_path;      //   order/orderid
 
      //订单项API
-     @RequestMapping(value = "/post_media", method = RequestMethod.POST, produces = "application/json;charset-UTF-8")
+     @RequestMapping(value = "/order", method = RequestMethod.POST, produces = "application/json;charset-UTF-8")
      @ResponseBody
      public Map<String, Object> orderItem(@RequestBody ItemMedia item){
          Map<String, Object> order_return = new HashMap<String, Object>();
