@@ -76,7 +76,7 @@ public class OrderController {
              item.setUrl(i_url);
              //设置成0，表示还未完成转码
              item.setStatus(0);
-             item.setOrder_video_path(order.getTrans_path()+"\\"+item.getUuid()+"."+item.getFormat());// order\\orderid\\uuid.mp4
+            // item.setOrder_video_path(order.getTrans_path()+"\\"+item.getUuid()+"."+item.getFormat());// order\\orderid\\uuid.mp4
              itemMedia = itemMediaRepository.save(item);
 
              order_return.put("uuid", itemMedia.getUuid());
