@@ -4,7 +4,9 @@
 <!-- jQuery -->
 <!--<script type="text/javascript" charset="utf8" src="js/jquery.js"></script>-->
 <!--<script type="text/javascript" charset="utf8" src="js/dataTables.bootstrap.js"></script>-->
-
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script type="text/javascript" src="js/bootstrap-progressbar.js"></script>
+<link rel="stylesheet" type="text/css" href="css/bootstrap-progressbar-3.3.4.css">
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="js/jquery.dataTables.js"></script>
 
@@ -17,8 +19,8 @@
     //    });
     $(document).ready(function(){
         var table = $('#upload_data').DataTable({
-            ajax: "http://61.48.40.126:9921/data-source-association",
-//            ajax: "http://localhost:8080/data-source-association",
+//            ajax: "http://61.48.40.126:9921/data-source-association",
+            ajax: "http://localhost:8080/data-source-association",
             columns:[
                 { data: 'upload'},
                 { data: 'title'},
@@ -157,29 +159,14 @@
             }
             var isOk = 0;
             alert("正在上传,请稍后");
-//            document.getElementById("div").style.display="";
-//            var bar = document.getElementById("bar");
-//            var total = document.getElementById("total");
-//            var barsize = parseInt(bar.style.width);
-//            var timeout = window.setInterval(function(){
-//                barsize = barsize +1;
-//                bar.style.width = barsize + "%";
-//                total.innerHTML = bar.style.width;
-//                if (barsize == 99) {
-//                    window.clearInterval(timeout);
-//                   // document.getElementById("div").style.display="none";
-//                    return;
-//                }
-//            }, 100);
             $('#button').prop('disabled', true);
-//            bar.style.width = barsize + "%";
-//            total.innerHTML = bar.style.width;
             rows.every( function ( rowIdx, tableLoop, rowLoop ) {
                 var d = this.data();
 //                console.log(d);
                 $.ajax({
                     type: "post",
-                    url: 'http://61.48.40.126:9921/upload-association',
+//                    url: 'http://61.48.40.126:9921/upload-association',
+                    url: 'http://localhost:8080/upload-association',
                     async: true, // 使用异步方式
                     // 1 需要使用JSON.stringify 否则格式为 a=2&b=3&now=14...
                     // 2 需要强制类型转换，否则格式为 {"a":"2","b":"3"}
@@ -187,19 +174,40 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data) {
-//                        this.invalidate(); // invalidate the data DataTables has cached for this row
                         isOk += 1;
-//                        barsize = barsize +1;
+//                        this.invalidate(); // invalidate the data DataTables has cached for this row
+
                         if(isOk == num ){
-                            alert("上传成功");
-                            window.location.reload();
-                           // document.getElementById("div").style.display="none";
-                            rows.remove().draw(false);
-                            $('#button').prop('disabled', false);
+                            alert("上传成功1");
+//                            rows.remove().draw(false);
+//                            $('#button').prop('disabled', false);
                         }
 //                    $('#result').text(data.result);
                     } // 注意不要在此行增加逗号
                 });
+            document.getElementById("div").style.display="";
+            var bar = document.getElementById("bar");
+            var total = document.getElementById("total");
+            var barsize = parseInt(bar.style.width);
+            var timeout = window.setInterval(function(){
+                barsize = barsize +1;
+                bar.style.width = barsize + "%";
+                total.innerHTML = bar.style.width;
+                if (barsize == 100 ) {
+                    window.clearInterval(timeout);
+                    if(isOk == num){
+                        bar.style.width = barsize + "%";
+                        total.innerHTML = bar.style.width;
+                        alert("上传成功");
+                        // document.getElementById("div").style.display="none";
+                        rows.remove().draw(false);
+                        $('#button').prop('disabled', false);
+                        window.location.reload();
+                    }
+
+                }
+            }, 100);
+
                 this.invalidate(); // invalidate the data DataTables has cached for this row
             } );
 //            rows.remove().draw(false);
@@ -311,7 +319,7 @@
         $('#refresh').click(function () {
             $.ajax({
                 type : "post",
-               url : "http://61.48.40.126:9921/data-refresh-association",
+                url : "http://61.48.40.126:9921/data-refresh-association",
                 success:function(data){
                     alert("刷新成功");
                     location.reload();
@@ -344,8 +352,9 @@
         </table>
     </div>
 
-    <div id="div" class="container" style="width: 450px; height: 25px; display: none">
-        <div id="bar" style="width:0%;background: #95CA0D; float: left; height: 100%; text-align: center; line-height: 150%;">
+    <div id="div" class="progress progress-striped active" style="display: none">
+        <div id="bar" class="progress-bar progress-bar-success" role="progressbar"
+             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
             <span id="total"></span>
         </div>
     </div>
