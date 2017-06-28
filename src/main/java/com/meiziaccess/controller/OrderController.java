@@ -40,7 +40,7 @@ public class OrderController {
         String url = "http://" + IPAddress + "/media?uuid=" + ord.getUuid();
 
         //处理视频，修改链接和地址
-        ord.setStatus(1);
+        ord.setStatus(0);
         ord.setUrl(url);
         List<ItemMedia> list =  itemMediaRepository.findMediaByUuid(ord.getUuid());
         ItemMedia itemMedia;
