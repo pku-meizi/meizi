@@ -98,14 +98,14 @@ public class MeiziaccessApplication  {
 	public Map<String, Object> getItemsAssociation(HttpServletRequest request) {
 
 		// 判断登录没有
-		Object o = request.getSession().getAttribute("username");
+		Object name = request.getSession().getAttribute("username");
 		Map<String, Object> map = new HashMap<>();
-		if (o == null){
+		if (name == null){
 			List<UploadItem> uploadstatus = new ArrayList<>();
 			map.put("data",uploadstatus);
 		}else{
-			Object o = request.getSession().getAttribute("vendor_type");
-			int vendor_type = Integer.parseInt(o.toString());
+			Object type = request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(type.toString());
 			List<UploadItem> uploadstatus = uploadRepository.findByStatusAndVendor_type(0,vendor_type);
 			map.put("data",uploadstatus);
 		}
