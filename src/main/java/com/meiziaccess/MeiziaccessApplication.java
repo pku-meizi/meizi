@@ -260,11 +260,18 @@ public class MeiziaccessApplication  {
 	//已上传页面数据
 	@RequestMapping( "/end_data" )
 	public Map<String, Object> home_end(HttpServletRequest request){
-		Object o = request.getSession().getAttribute("vendor_type");
-		int vendor_type = Integer.parseInt(o.toString());
-		List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_type(1, vendor_type);
+		Object name = request.getSession().getAttribute("username");
 		Map<String, Object> map = new HashMap<>();
-		map.put("data",uploadItems);
+		if(name == null){
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
+		}else {
+			Object o = request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(o.toString());
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_type(1, vendor_type);
+			//Map<String, Object> map = new HashMap<>();
+			map.put("data", uploadItems);
+		}
 		return map;
 	}
 
