@@ -98,9 +98,9 @@ public class MeiziaccessApplication  {
 	public Map<String, Object> getItemsAssociation(HttpServletRequest request) {
 
 		// 判断登录没有
-		String username = request.getSession().getAttribute("username").toString();
+		Object o = request.getSession().getAttribute("username");
 		Map<String, Object> map = new HashMap<>();
-		if (username == null){
+		if (o == null){
 			List<UploadItem> uploadstatus = new ArrayList<>();
 			map.put("data",uploadstatus);
 		}else{
