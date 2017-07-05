@@ -22,6 +22,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.core.env.SystemEnvironmentPropertySource;
+import org.springframework.http.HttpRequest;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class MeiziaccessApplication  {
 	@Autowired
 	UploadRepository uploadRepository;
 
-	private int vendor_type = 1;
+//	private int vendor_type = 1;
 //登录
 	@RequestMapping(value = "/authenticate")
 	public Map<String, Object> authenticate(HttpServletRequest request){
@@ -62,7 +63,7 @@ public class MeiziaccessApplication  {
 		}else{
 			if(objData.getInt("code") ==  200){
 				model.put("status", true);
-				vendor_type = objData.getInt("data");
+				int vendor_type = objData.getInt("data");
 				System.out.println("session-set-username=" + username);
 				request.getSession().setAttribute("username", username);
 				request.getSession().setAttribute("vendor_type", vendor_type);
@@ -96,6 +97,8 @@ public class MeiziaccessApplication  {
 	@ResponseBody
 	public Map<String, Object> getItemsAssociation(HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
+		Object o = request.getSession().getAttribute("vendor_type");
+		int vendor_type = Integer.parseInt(o.toString());
 		List<UploadItem> uploadstatus = uploadRepository.findByStatusAndVendor_type(0,vendor_type);
 		map.put("data",uploadstatus);
 		return map;
@@ -244,7 +247,9 @@ public class MeiziaccessApplication  {
 
 	//已上传页面数据
 	@RequestMapping( "/end_data" )
-	public Map<String, Object> home_end(){
+	public Map<String, Object> home_end(HttpServletRequest request){
+		Object o = request.getSession().getAttribute("vendor_type");
+		int vendor_type = Integer.parseInt(o.toString());
 		List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_type(1, vendor_type);
 		Map<String, Object> map = new HashMap<>();
 		map.put("data",uploadItems);
