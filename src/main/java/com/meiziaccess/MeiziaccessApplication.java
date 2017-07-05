@@ -118,7 +118,7 @@ public class MeiziaccessApplication  {
 	public boolean refreshItemsAssociation(HttpServletRequest request) {
 		System.out.println("查找路径 " + upload_local_path);
 		Object o = request.getSession().getAttribute("vendor_type");
-		if (o == null){
+		if (o == null) {
 			return false;
 		}
 		int vendor_type = Integer.parseInt(o.toString());
@@ -132,17 +132,21 @@ public class MeiziaccessApplication  {
 
 		System.out.println("查找后的list数据保存到数据库");
 		System.out.println(list.get(0).getPath());
-		for(int i=0;i<list.size();i++){
+		if (list.isEmpty()) {
+			System.out.println("查到的是空");
+		} else{
+			for (int i = 0; i < list.size(); i++) {
 
-			if(uploadRepository.findByTitle(list.get(i).getTitle()).isEmpty()){
-				list.get(i).setUpload_time(new Date());
-				list.get(i).setUpload(true);
-				list.get(i).setVendor_type(vendor_type);
-				uploadRepository.save(list.get(i));
-			}else {
-				System.out.println("有了");
+				if (uploadRepository.findByTitle(list.get(i).getTitle()).isEmpty()) {
+					list.get(i).setUpload_time(new Date());
+					list.get(i).setUpload(true);
+					list.get(i).setVendor_type(vendor_type);
+					uploadRepository.save(list.get(i));
+				} else {
+					System.out.println("有了");
+				}
 			}
-		}
+	}
 		return true;
 	}
 

@@ -40,7 +40,7 @@ public class OrderController {
         String url = "http://" + IPAddress + "/media?uuid=" + ord.getUuid();
 
         //处理视频，修改链接和地址
-        ord.setStatus(1);
+        ord.setStatus(0);
         ord.setUrl(url);
         List<ItemMedia> list =  itemMediaRepository.findMediaByUuid(ord.getUuid());
         ItemMedia itemMedia;
@@ -70,7 +70,7 @@ public class OrderController {
         if(list.isEmpty()) return null;
         ItemMedia itemMedia = list.get(0);
         System.out.println(itemMedia.getHighdef_video_path()); //        String filePath = "/home/derc/video/" + id + ".rmvb";
-        String filePath = itemMedia.getHighdef_video_path();
+        String filePath = itemMedia.getOrder_video_path();
         FileSystemResource file = new FileSystemResource(filePath);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

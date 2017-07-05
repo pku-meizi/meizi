@@ -16,11 +16,11 @@
     //    });
     $(document).ready(function() {
        $('#item').DataTable({
- //          ajax: "http://61.48.40.126:9921/indent_data",
-           ajax: "http://localhost:8080/indent_data",
+           ajax: "http://61.48.40.126:9921/indent_data",
+//           ajax: "http://localhost:8080/indent_data",
            checkbox:true,
             columns: [
-                {data: 'orderid'},
+                {data: 'uuid'},
                 {data: 'starttime'},
                 {data: 'endtime'},
                 {data: 'highdef_video_path'},
