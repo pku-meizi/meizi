@@ -96,11 +96,19 @@ public class MeiziaccessApplication  {
 	@RequestMapping("/data-source-association")
 	@ResponseBody
 	public Map<String, Object> getItemsAssociation(HttpServletRequest request) {
+
+		// 判断登录没有
+		String username = request.getSession().getAttribute("username").toString();
 		Map<String, Object> map = new HashMap<>();
-		Object o = request.getSession().getAttribute("vendor_type");
-		int vendor_type = Integer.parseInt(o.toString());
-		List<UploadItem> uploadstatus = uploadRepository.findByStatusAndVendor_type(0,vendor_type);
-		map.put("data",uploadstatus);
+		if (username == null){
+			List<UploadItem> uploadstatus = new ArrayList<>();
+			map.put("data",uploadstatus);
+		}else{
+			Object o = request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(o.toString());
+			List<UploadItem> uploadstatus = uploadRepository.findByStatusAndVendor_type(0,vendor_type);
+			map.put("data",uploadstatus);
+		}
 		return map;
 	}
 
