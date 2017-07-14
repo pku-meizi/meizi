@@ -70,7 +70,7 @@ public class Associator {
                 curAddress.setUnCatalgedXmlPath(file.getAbsolutePath());
                 curAddress.setCatalgedXmlPath("");
                 curAddress.setName(name);
-                //curAddress.setKeyFramePath(keyFramePath);
+                curAddress.setKeyFramePath(keyFramePath);
 
                 rs.add(curAddress);
             }
