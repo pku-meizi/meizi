@@ -574,14 +574,17 @@ public class UploadTool implements UploadToolInterface {
         //xml
         List<String> xmlName = getNameList(xmlPath);
         for(int i=0; i<xmlName.size(); i++){
-                File f = new File(xmlName.get(i));
-                f.delete();
+            System.out.println("xml = " + xmlName.get(i));
+                File xmlf = new File(xmlName.get(i));
+                xmlf.delete();
+            System.out.println("xml =删除成功 ");
         }
 
         //lowCodeVideo
-        File f = new File(lowCodeVideoPath);
-            f.delete();
-
+        System.out.println("lowCodeVideoPath = " +lowCodeVideoPath);
+        File lowVideof = new File(lowCodeVideoPath);
+        lowVideof.delete();
+        System.out.println("lowCodeVideoPath = 删除成功" );
         //keyFrames
         List<String> keyFrames = getNameList(keyFramePath);
 
@@ -589,6 +592,7 @@ public class UploadTool implements UploadToolInterface {
 
             File file = new File(keyFrames.get(i));
             file.delete();
+            System.out.println("keyFramePath =删除成功 ");
         }
 
 
