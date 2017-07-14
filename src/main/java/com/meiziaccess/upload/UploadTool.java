@@ -576,7 +576,7 @@ public class UploadTool implements UploadToolInterface {
         for(int i=0; i<xmlName.size(); i++){
             System.out.println("xml = " + xmlName.get(i));
                 File xmlf = new File(xmlName.get(i));
-                xmlf.delete();
+                xmlf.getAbsoluteFile().delete();
             System.out.println("xml =删除成功 ");
         }
 
