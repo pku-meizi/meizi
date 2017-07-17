@@ -127,12 +127,10 @@
 
         $('#dele').click(function () {
             var rows = table.rows('.selected');
-
             if(rows.data().length == 0){
                 alert("请选择删除的视频");
                 return false;
             }
-            alert("选好视频了");
             var isOk = 0;
             var num = rows.data().length;
             alert("正在删除,请稍后");
