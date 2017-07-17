@@ -155,7 +155,9 @@ public class UploadTool implements UploadToolInterface {
                                     0,
                                     false,
                                     "",
-                                    "");
+                                    "",
+                                    0
+        );
         //xml??????
         log.setXml_trans_path(trans_path + "/" +"trans_"+new Date().getTime()+"_"+xmlName);
 
@@ -496,6 +498,8 @@ public class UploadTool implements UploadToolInterface {
 
         int status = 0;
 
+        int play_status = 0;
+
         boolean on_shelf = false;
 
         String md5 = item.getMd5();
@@ -528,7 +532,7 @@ public class UploadTool implements UploadToolInterface {
 
         //????????
         updateDatabase( xmlName, videoName, uploadLogRepository,  remotePath,
-                upload_vendor_name,  uploader_name,  vendorPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5, title);
+                upload_vendor_name,  uploader_name,  vendorPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5, title, play_status);
         return true;
     }
 
@@ -613,6 +617,8 @@ public class UploadTool implements UploadToolInterface {
 
         int status = 0;
 
+        int play_status = 0;
+
         boolean on_shelf = false;
 
         String md5 = item.getMd5();
@@ -670,7 +676,7 @@ public class UploadTool implements UploadToolInterface {
 
         //只支持单个xml，关键帧，低码文件对应
         updateDatabase( xmlName, videoName, uploadLogRepository,  remotePath,
-                upload_vendor_name,  uploader_name,  highCodeVideoPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5, title);
+                upload_vendor_name,  uploader_name,  highCodeVideoPath, trans_path, play_path, item,  remoteKeyFramesPath, status, on_shelf, md5, title, play_status);
         return true;
     }
 
@@ -691,12 +697,13 @@ public class UploadTool implements UploadToolInterface {
      * @param on_shelf              上架状态
      * @param md5
      * @param title
+     * @param play_status
      * @return
      */
     public boolean updateDatabase(List<String> xmlName, String videoName, UploadLogRepository uploadLogRepository,
                                   String upload_remote_path,String upload_vendor_name, String uploader_name, String vendor_path,
                                   String trans_path, String play_path, UploadItem item, String remoteKeyFramesPath, int status,
-                                  boolean on_shelf, String md5, String title) {
+                                  boolean on_shelf, String md5, String title, int play_status) {
 
         String xmlOriginName = xmlName.get(0);
         //xml
@@ -764,7 +771,8 @@ public class UploadTool implements UploadToolInterface {
                 status,
                 on_shelf,
                 md5,
-                title
+                title,
+                play_status
         );
         log.setXml_trans_path(trans_path + "/" +"trans_"+new Date().getTime()+"_"+xmlOriginName);
 
