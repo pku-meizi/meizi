@@ -151,7 +151,7 @@ public class MeiziaccessApplication  {
 					list.get(i).setVendor_type(vendor_type);
 					uploadRepository.save(list.get(i));
 				} else {
-					System.out.println("有了");
+					System.out.println(uploadRepository.findByTitle(list.get(i).getTitle())+"有了");
 				}
 			}
 	}
