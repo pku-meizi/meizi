@@ -136,7 +136,7 @@ public class Associator {
         try {
             doc = builder.build(file);
             Element root = doc.getRootElement();
-            name=root.getChildText("PlanName");
+            name=root.getChildText("PublishName");
         } catch (JDOMException | IOException e) {
             // TODO Auto-generated catch block
             System.out.println("file: " + file.getAbsolutePath());
