@@ -19,8 +19,8 @@
     //    });
     $(document).ready(function(){
         var table = $('#upload_data').DataTable({
-            ajax: "http://61.48.40.126:9921/data-source-association",
-//            ajax: "http://localhost:8080/data-source-association",
+//            ajax: "http://61.48.40.126:9921/data-source-association",
+            ajax: "http://localhost:8080/data-source-association",
             columns:[
                 { data: 'upload'},
                 { data: 'title'},
@@ -319,6 +319,7 @@
             $.ajax({
                 type : "post",
                 url : "http://61.48.40.126:9921/data-refresh-association",
+//                url : "http://localhost:8080/data-refresh-association",
                 success:function(data){
                     alert("刷新成功");
                     location.reload();

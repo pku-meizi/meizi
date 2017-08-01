@@ -17,7 +17,7 @@ public interface UploadRepository extends JpaRepository<UploadItem, Long> {
 
     List<UploadItem> findByTitle(String title);
 
-    @Query("select u from UploadItem u where u.status=?1 and u.vendor_type=?2")
-    List<UploadItem> findByStatusAndVendor_type(int status, int vendor_type);
+    @Query("select u from UploadItem u where u.status=?1 and u.vendor_type=?2 and u.token=?3")
+    List<UploadItem> findByStatusAndVendor_typeAndToken(int status, int vendor_type, int token);
 
 }

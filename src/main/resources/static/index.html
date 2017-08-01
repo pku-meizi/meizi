@@ -75,8 +75,29 @@
             </div>
             <div  ng-controller="navigation as nav" id="navbar" class="navbar-collapse collapse" >
                 <ul class="nav navbar-nav" role="tablist">
+
                     <li ng-class="{active:nav.tab('home')}" class="active"><a href="#/">主页</a></li>
-                    <li ng-class="{active:nav.tab('end')}" ><a href="#/end">已上传</a></li>
+                    <!--<li ng-class="{active:nav.tab('upload_audit')}" ><a href="#/upload_audit">已上传</a></li>-->
+
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" id="myTabDrop1" class="dropdown-toggle"
+                           data-toggle="dropdown">已上传<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+                            <li><a href="#/upload_audit" tabindex="-1" data-toggle="tab">
+                                待审核</a>
+                            </li>
+                            <li><a href="#/upload_pass" tabindex="-1" data-toggle="tab">
+                                审核通过</a>
+                            </li>
+                            <li><a href="#/upload_not_pass" tabindex="-1" data-toggle="tab">
+                                审核未通过</a>
+                            </li>
+                        </ul>
+                    </li>
+
+
+
                     <li ng-class="{active:nav.tab('indent')}" ><a href="#/indent">订单</a></li>
                     <li><a href="#/">关于</a></li>
                     <li><a href="#/">联系</a></li>

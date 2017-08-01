@@ -1,12 +1,10 @@
 package com.meiziaccess;
 
 import com.meiziaccess.CommandTool.MyHttpUtil;
-import com.meiziaccess.model.*;
+import com.meiziaccess.model.ItemMedia;
+import com.meiziaccess.model.ItemMediaRepository;
 import com.meiziaccess.model.UploadItem;
-import com.meiziaccess.model.UploadItemList;
-import com.meiziaccess.model.UploadObject;
 import com.meiziaccess.model.UploadRepository;
-
 import com.meiziaccess.upload.UploadTool;
 import com.meiziaccess.upload.UploadToolInterface;
 import com.meiziaccess.uploadModel.UploadLogRepository;
@@ -15,22 +13,16 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecgframework.poi.excel.ExcelExportUtil;
 import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.core.env.SystemEnvironmentPropertySource;
-import org.springframework.http.HttpRequest;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Null;
 import java.util.*;
-import com.meiziaccess.secure.*;
 
 
 
@@ -101,13 +93,13 @@ public class MeiziaccessApplication  {
 		Object name = request.getSession().getAttribute("username");
 		Map<String, Object> map = new HashMap<>();
 		if (name == null){
-			List<UploadItem> uploadstatus = new ArrayList<>();
-			map.put("data",uploadstatus);
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
 		}else{
 			Object type = request.getSession().getAttribute("vendor_type");
 			int vendor_type = Integer.parseInt(type.toString());
-			List<UploadItem> uploadstatus = uploadRepository.findByStatusAndVendor_type(0,vendor_type);
-			map.put("data",uploadstatus);
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(0,vendor_type,0);
+			map.put("data",uploadItems);
 		}
 		return map;
 	}
@@ -258,8 +250,8 @@ public class MeiziaccessApplication  {
 
 
 	//已上传页面数据
-	@RequestMapping( "/end_data" )
-	public Map<String, Object> home_end(HttpServletRequest request){
+	@RequestMapping( "/upload_audit_data" )
+	public Map<String, Object> upload_audit(HttpServletRequest request){
 		Object name = request.getSession().getAttribute("username");
 		Map<String, Object> map = new HashMap<>();
 		if(name == null){
@@ -268,12 +260,51 @@ public class MeiziaccessApplication  {
 		}else {
 			Object o = request.getSession().getAttribute("vendor_type");
 			int vendor_type = Integer.parseInt(o.toString());
-			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_type(1, vendor_type);
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 0);
 			//Map<String, Object> map = new HashMap<>();
 			map.put("data", uploadItems);
+			System.out.println(uploadItems.get(0).getTitle());
 		}
 		return map;
 	}
+
+	@RequestMapping("/upload_pass_data")
+	public  Map<String, Object> upload_pass(HttpServletRequest request){
+		Object name = request.getSession().getAttribute("username");
+		Map<String, Object> map = new HashedMap();
+		if (name == null){
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
+		}else {
+			Object o =request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(o.toString());
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 99);
+			map.put("data", uploadItems);
+			System.out.println(uploadItems.get(0).getTitle());
+		}
+
+			return map;
+	}
+
+	@RequestMapping("/upload_not_pass_data")
+	public  Map<String, Object> upload_not_pass(HttpServletRequest request){
+		Object name = request.getSession().getAttribute("username");
+		Map<String, Object> map = new HashedMap();
+		if (name == null){
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
+		}else {
+			Object o =request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(o.toString());
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 2);
+			map.put("data", uploadItems);
+			System.out.println(uploadItems.get(0).getTitle());
+		}
+
+		return map;
+	}
+
+
 
 	@Autowired
 	ItemMediaRepository itemMediaRepository;
