@@ -38,24 +38,49 @@ public class Associator {
                             StringBuilder sb = new StringBuilder();
                             associatetKeyFrames(name, frameDir, sb);
                             keyFramePath = sb.toString();
+
+                            String LP1 = associateVideo(name,lowVideoDir);
+                            curAddress.setLowCodeVideoPath(LP1);
+                            //将LP1的video换成highVideo
+                            String GP1 = LP1.replace("video","highVideo");
+                            curAddress.setHighCodeVideoPath(GP1);
                             break;
                         case 2:
                             name = getName2(file);      //BTV
                             keyFramePath = getKeyFrameBTVorNanfang(file, frameDir);
-                            // System.out.println(keyFramePath+"-----------------------------------------------------------------------------------------");
+
+                            String LP2 = associateVideo(name,lowVideoDir);
+                            curAddress.setLowCodeVideoPath(LP2);
+                            curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
                             break;
                         case 3:
                             name = getName2(file);      //南方素材
                             keyFramePath = getKeyFrameBTVorNanfang(file, frameDir);
+
+                            String LP3 = associateVideo(name,lowVideoDir);
+                            curAddress.setLowCodeVideoPath(LP3);
+                            curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
                             break;
                         case 4:
                             name = getName3(file);      //海外素材
                             keyFramePath = getKeyFrameHaiWai(file, frameDir);
+
+                            String LP4 = associateVideo(name,lowVideoDir);
+                            curAddress.setLowCodeVideoPath(LP4);
+//                            curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
+//                            将LP4的video换成highVideo，并把MP4换成avi,后者解析xml
+                            String GP4 = highVideoDir+File.separator+name+".AVI";
+                            String GP41 = GP4.replace("video","highVideo/HaiWai");
+                            curAddress.setHighCodeVideoPath(GP41);
                             break;
                         case 5:
                             name = getName4(file);      //电视剧
                             System.out.println(name);
                             keyFramePath = getKeyFrameDianshiju(file, frameDir);
+
+                            String LP5 = associateVideo(name,lowVideoDir);
+                            curAddress.setLowCodeVideoPath(LP5);
+                            curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
                             break;
                         default:
                     }
@@ -63,8 +88,9 @@ public class Associator {
                     continue;
                 }
 
-                curAddress.setLowCodeVideoPath(associateVideo(name,lowVideoDir));
-                curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
+//                String lp = associateVideo(name,lowVideoDir);
+//                curAddress.setLowCodeVideoPath(lp);
+//                curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
 
                 curAddress.setUnCatalgedXmlPath(file.getAbsolutePath());
                 curAddress.setCatalgedXmlPath("");

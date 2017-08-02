@@ -24,6 +24,14 @@ angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider, $httpProv
 		templateUrl : 'upload_not_pass.html',
 		controller : 'upload_not_pass',
 		controllerAs:'controller',
+	}).when("/correlation",{
+		templateUrl : 'correlation.html',
+		controller : 'correlation',
+		controllerAs:'controller',
+	}).when("/contact",{
+		templateUrl : 'contact.html',
+		controller : 'contact',
+		controllerAs:'controller',
 	}).otherwise('/');
 
 	$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -115,6 +123,10 @@ angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider, $httpProv
         }).controller('upload_pass', function($http, $rootScope){
 
         }).controller('upload_not_pass', function($http, $rootScope){
+
+		}).controller('correlation', function($http, $rootScope){
+
+		}).controller('contact', function($http, $rootScope){
 
 });
 
