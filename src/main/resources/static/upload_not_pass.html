@@ -43,9 +43,11 @@
                     "orderable":false,
                     "data":"upload_time",
                     "render": function ( data, type, full, meta) {
-                        var data1 = new Date(data).toLocaleDateString();
-
-                        return data1;
+                        var data0 = new Date(data).toLocaleDateString();
+                        var data1 = new Date(data).toLocaleTimeString();
+//                       var d = date.format("yyyy-MM-dd HH:mm:ss",data);
+                        var d = data0+data1;
+                        return d;
                     }
                 },
                 {
