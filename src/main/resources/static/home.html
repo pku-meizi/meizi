@@ -43,7 +43,7 @@
                 },
                 {
                     "targets": 2,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "price_type",
                     "render": function ( data, type, full, meta) {
                         return '<select class="form-control" name="price_type"> \
@@ -54,7 +54,7 @@
                 },
                 {
                     "targets": 3,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "price",
                     "render": function ( data, type, full, meta) {
                         return '<input type="text" class="form-control" placeholder="价格(单位/元)" name="price">';
@@ -62,7 +62,7 @@
                 },
                 {
                     "targets": 4,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "material_type",
                     "render": function ( data, type, full, meta) {
                         return '<select name= "material_type" class="form-control" id="material_type"> \
@@ -72,7 +72,7 @@
                     }
                 },{
                     "targets": 5,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "copyright_type",
                     "render": function ( data, type, full, meta) {
                         return '<select name= "copyright_type" class="form-control" id="copyright_type"> \
@@ -83,7 +83,7 @@
                 },
                 {
                     "targets": 6,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "copyright_duration",
                     "render": function ( data, type, full, meta) {
                         return '<select class="form-control" name="copyright_duration" id="copyright_duration"> \
@@ -101,7 +101,7 @@
             order: [
                 [0, null]
             ],
-            paging: false
+            paging: true
         });
 //        $('input').iCheck({
 //            checkboxClass: 'icheckbox_minimal',
