@@ -43,10 +43,12 @@
                     "orderable":true,
                     "data":"upload_time",
                     "render": function ( data, type, full, meta) {
-                        var data0 = new Date(data).toLocaleDateString();
-                        var data1 = new Date(data).toLocaleTimeString();
-//                       var d = date.format("yyyy-MM-dd HH:mm:ss",data);
-                        var d = data0+data1;
+//                        var data0 = new Date(data).toLocaleDateString();
+//                        var data1 = new Date(data).toLocaleTimeString();
+//                        var d = data0+data1;
+                        var data0 = new Date(data)
+                        var d = data0.toLocaleString();
+
                         return d;
                     }
                 },

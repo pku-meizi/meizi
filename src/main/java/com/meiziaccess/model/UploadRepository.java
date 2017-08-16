@@ -20,4 +20,9 @@ public interface UploadRepository extends JpaRepository<UploadItem, Long> {
     @Query("select u from UploadItem u where u.status=?1 and u.vendor_type=?2 and u.token=?3")
     List<UploadItem> findByStatusAndVendor_typeAndToken(int status, int vendor_type, int token);
 
+    @Query("delete from UploadItem u where u.md5=?1")
+    List<UploadItem> delMd5(String md5);
+
+    @Query("update UploadItem u set u.inform=null , u.price=0, u.price_type=0, u.status=0, u.token=0 where u.md5=?1")
+    List<UploadItem> updataBymd5(String md5);
 }

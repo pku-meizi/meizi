@@ -327,4 +327,38 @@ public class MeiziaccessApplication  {
 		workbook.write(response.getOutputStream());
 	}
 
+	@RequestMapping(value = "/sold_out_del", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> soldDel(@RequestBody UploadItem item){
+		Map<String, Object> map = new HashedMap();
+		List<UploadItem> list = new ArrayList<>();
+		list.add(item);
+
+		for (int i=0;i<list.size();i++){
+			uploadRepository.delMd5(list.get(i).getMd5());
+		}
+		UploadToolInterface tool = new UploadTool();
+
+		//获取到要删除的素材信息，进行删除
+		tool.deleteItemDirsAssociation(item);
+		map.put("status", true);
+		return map;
+	}
+
+	@RequestMapping(value = "/sold_out_return", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> soldReturn(@RequestBody UploadItem item){
+		Map<String, Object> map = new HashedMap();
+		//改变的有inform审核意见、price价格、price_type、status上传状态、token审核状态
+		List<UploadItem> list = new ArrayList<>();
+		list.add(item);
+
+		for (int i=0;i<list.size();i++){
+
+			uploadRepository.updataBymd5(list.get(i).getMd5());
+		}
+		map.put("status",true);
+		return map;
+	}
+
 }
