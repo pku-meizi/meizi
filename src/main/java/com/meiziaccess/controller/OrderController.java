@@ -53,7 +53,7 @@ public class OrderController {
      @ResponseBody
      public Map<String, Object> orderItem(@RequestBody ItemMedia item){
          Map<String, Object> order_return = new HashMap<String, Object>();
-
+         int mag = 1;
          //查找order表中的是否存在orderid
          List<ItemOrder> o_list = orderRepository.findOrderByOrderid(item.getOrderid());
          ItemMedia itemMedia ;
@@ -87,10 +87,10 @@ public class OrderController {
 
          }else{
              List<ItemMedia> i_o_list = itemMediaRepository.findMediaByOrderid(item.getOrderid());
-             int mag = 1;
+
              for(int j=0; j<i_o_list.size(); j++){
 
-                if(i_o_list.get(j).getUuid()==item.getUuid()){
+                if(i_o_list.get(j).getUuid().equals(item.getUuid())){
                     mag = 0;
                     order_return.put("uuid", i_o_list.get(j).getUuid());
                     order_return.put("status", i_o_list.get(j).getStatus());
@@ -104,8 +104,8 @@ public class OrderController {
                  //设置成0，表示还未完成转码
                  item.setStatus(0);
                  String path = order_path + item.getOrderid();
-                 item.setOrder_video_path(path+File.separator+item.getUuid()+"."+item.getFormat());// order\\orderid\\uuid.mp4
-                 System.out.println(item.getOrder_video_path()+"###");
+//                 item.setOrder_video_path(path+File.separator+item.getUuid()+"."+item.getFormat());// order\\orderid\\uuid.mp4
+//                 System.out.println(item.getOrder_video_path()+"###"); 转码写入
                  itemMedia = itemMediaRepository.save(item);
                  order_return.put("uuid", itemMedia.getUuid());
                  order_return.put("status", itemMedia.getStatus());
