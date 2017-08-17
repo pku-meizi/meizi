@@ -9,13 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.*;
 import java.util.HashMap;
@@ -102,7 +104,8 @@ public class OrderController {
                  //设置成0，表示还未完成转码
                  item.setStatus(0);
                  String path = order_path + item.getOrderid();
-                 item.setOrder_video_path(path+"\\"+item.getUuid()+"."+item.getFormat());// order\\orderid\\uuid.mp4
+                 item.setOrder_video_path(path+File.separator+item.getUuid()+"."+item.getFormat());// order\\orderid\\uuid.mp4
+                 System.out.println(item.getOrder_video_path()+"###");
                  itemMedia = itemMediaRepository.save(item);
                  order_return.put("uuid", itemMedia.getUuid());
                  order_return.put("status", itemMedia.getStatus());
