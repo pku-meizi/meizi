@@ -263,7 +263,6 @@ public class MeiziaccessApplication  {
 			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 0);
 			//Map<String, Object> map = new HashMap<>();
 			map.put("data", uploadItems);
-			System.out.println(uploadItems.get(0).getTitle());
 		}
 		return map;
 	}
@@ -280,7 +279,6 @@ public class MeiziaccessApplication  {
 			int vendor_type = Integer.parseInt(o.toString());
 			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 99);
 			map.put("data", uploadItems);
-			System.out.println(uploadItems.get(0).getTitle());
 		}
 
 			return map;
@@ -298,7 +296,6 @@ public class MeiziaccessApplication  {
 			int vendor_type = Integer.parseInt(o.toString());
 			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 2);
 			map.put("data", uploadItems);
-			System.out.println(uploadItems.get(0).getTitle());
 		}
 
 		return map;
@@ -352,8 +349,7 @@ public class MeiziaccessApplication  {
 		//改变的有inform审核意见、price价格、price_type、status上传状态、token审核状态
 		List<UploadItem> list = new ArrayList<>();
 		list.add(item);
-
-		for (int i=0;i<list.size();i++){
+ 		for (int i=0;i<list.size();i++){
 
 			uploadRepository.updataBymd5(list.get(i).getMd5());
 		}
