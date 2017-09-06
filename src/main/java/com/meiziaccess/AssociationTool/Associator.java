@@ -14,8 +14,7 @@ import java.util.List;
 /**
  * Created by sun on 2016/11/27.
  */
-public class Associator {
-
+public class  Associator {
     //orginalDir 编目前xml
     //xmlDir 编目后xml
     public List<Addresses> getAddresses(String orginalDir,String lowVideoDir,String highVideoDir,String frameDir,String xmlDir, int type) {
@@ -30,6 +29,8 @@ public class Associator {
                 Addresses curAddress=new Addresses();
                 String name="";
                 String keyFramePath="";
+                String highVideoName = "";
+                String highPath = "";
                 //解析xml, 获取名字
                 try {
                     switch (type) {
@@ -51,6 +52,8 @@ public class Associator {
                         case 4:
                             name = getName3(file);      //海外素材
                             keyFramePath = getKeyFrameHaiWai(file, frameDir);
+                            highVideoName= name+"."+getHighFormat(file);
+                            highPath = highVideoDir+File.separator+"HiWai"+File.separator+highVideoName;
                             break;
                         case 5:
                             name = getName4(file);      //电视剧
@@ -64,7 +67,12 @@ public class Associator {
                 }
 
                 curAddress.setLowCodeVideoPath(associateVideo(name,lowVideoDir));
-                curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
+                if (highPath.equals("")){
+                    curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
+                }else {
+                    curAddress.setHighCodeVideoPath(highPath);
+                }
+
 
                 curAddress.setUnCatalgedXmlPath(file.getAbsolutePath());
                 curAddress.setCatalgedXmlPath("");
@@ -75,6 +83,29 @@ public class Associator {
             }
         }
         return rs;
+    }
+
+     //针对海外素材的高码文件
+
+    public String getHighFormat(File file){
+        String path = new String();
+        SAXBuilder builder = new SAXBuilder();
+        Document doc = null;
+        try {
+            doc = builder.build(file);
+            Element root = doc.getRootElement();
+            Namespace ns = root.getNamespace();
+            Element nameElemnet=root.getChild("ImportContents",ns).getChild("ContentData",ns).getChild("ContentFile",ns).getChild("FileItem",ns).getChild("FileName",ns);
+            path = nameElemnet.getText();
+            String[] p = path.split("\\.");
+            int id = p.length-1;
+            path = p[id];
+        } catch (JDOMException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return path;
     }
 
     private boolean isXml(File file) {

@@ -12,12 +12,13 @@ import com.meiziaccess.uploadModel.UploadLog;
 import com.meiziaccess.uploadModel.UploadLogRepository;
 import org.apache.commons.lang.StringUtils;
 
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -412,7 +413,7 @@ public class UploadTool implements UploadToolInterface {
         List<UploadItem> list = new ArrayList<>();
         Associator associator=new Associator();
 //        System.out.println(path);
-        List<Addresses> rs=associator.getAddresses(path + "/xml",path+"/video",path+"/video",
+        List<Addresses> rs=associator.getAddresses(path + "/xml",path+"/video",path+File.separator+"highCodeVideo",
                 path+"/keyFrame",path+"/xml", type);
 //        List<Addresses> rs=associator.getAddresses(path + "\\xml",path+"\\视频",path+"\\视频",
 //                path+"\\视频截图",path+"\\xml");
