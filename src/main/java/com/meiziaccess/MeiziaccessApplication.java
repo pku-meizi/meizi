@@ -131,7 +131,7 @@ public class MeiziaccessApplication  {
 //		map.put("data", list);
 
 		System.out.println("查找后的list数据保存到数据库");
-		System.out.println(list.get(0).getPath());
+//		System.out.println(list.get(0).getPath());
 		if (list.isEmpty()) {
 			System.out.println("查到的是空");
 		} else{
