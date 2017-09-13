@@ -22,6 +22,7 @@ public class  Associator {
         List<Addresses> rs=new ArrayList<>();
         File root = new File(orginalDir);
         File[] files = root.listFiles();
+        System.out.println(files.length);
         for (File file : files) {
             if (file.isDirectory()) {
                 rs.addAll(getAddresses(file.getAbsolutePath(),lowVideoDir,highVideoDir,frameDir,xmlDir, type));
@@ -50,7 +51,8 @@ public class  Associator {
                             keyFramePath = getKeyFrameBTVorNanfang(file, frameDir);
                             break;
                         case 4:
-                            name = getName3(file);      //海外素材
+                            name = getName3(file);//海外素材
+                            System.out.println(name);
                             keyFramePath = getKeyFrameHaiWai(file, frameDir);
                             highVideoName= name+"."+getHighFormat(file);
                             highPath = highVideoDir+File.separator+"HiWai"+File.separator+highVideoName;
@@ -65,10 +67,12 @@ public class  Associator {
                 }catch (Exception e){
                     continue;
                 }
-
+                String s = associateVideo(name,lowVideoDir);
+                System.out.println(s);
                 curAddress.setLowCodeVideoPath(associateVideo(name,lowVideoDir));
+
                 if (highPath.equals("")){
-                    curAddress.setHighCodeVideoPath(associateVideo(name,highVideoDir));
+                    curAddress.setHighCodeVideoPath(associateVideo(name,lowVideoDir));
                 }else {
                     curAddress.setHighCodeVideoPath(highPath);
                 }
@@ -131,11 +135,12 @@ public class  Associator {
                 String filename = file.getName().replace("（一）", "1/2").replace("（二）", "2/2").toLowerCase();
                 while (filename.contains(" ")) filename=filename.replaceAll(" ","");
                 if (filename.contains(name)) {
-                   return file.getAbsolutePath();
+                    rs= file.getAbsolutePath();
+                   return rs;
                 }
             }
         }
-        return "";
+        return rs;
     }
 
 
