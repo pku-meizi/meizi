@@ -1,20 +1,9 @@
 package com.meiziaccess.download;
 
 import com.meiziaccess.CommandTool.CommandRunner;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.CollectionUtils;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.SystemEnvironmentPropertySource;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collection;
 import java.util.Vector;
 
 
@@ -33,7 +22,7 @@ public class DownloadTool implements DownloadToolInterface {
             Vector<String> localList = CommandRunner.execCmds("/bin/ls " + localDir);
 
             //获取远程文件列表
-            Vector<String> remoteList = CommandRunner.runSSHAndGetString("/bin/ls " + remoteDir);
+            Vector<String> remoteList = CommandRunner.runSSHAndGetString("/bin/ls " + remoteDir)                                                             ;
 
             remoteList.removeAll(localList);
 

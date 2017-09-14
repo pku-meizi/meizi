@@ -55,7 +55,7 @@ public class  Associator {
                             System.out.println(name);
                             keyFramePath = getKeyFrameHaiWai(file, frameDir);
                             highVideoName= name+"."+getHighFormat(file);
-                            highPath = highVideoDir+File.separator+"HiWai"+File.separator+highVideoName;
+                            highPath = highVideoDir+File.separator+"HaiWai"+File.separator+highVideoName;
                             break;
                         case 5:
                             name = getName4(file);      //电视剧
@@ -103,7 +103,7 @@ public class  Associator {
             path = nameElemnet.getText();
             String[] p = path.split("\\.");
             int id = p.length-1;
-            path = p[id];
+            path = p[id].toLowerCase();
         } catch (JDOMException e) {
             e.printStackTrace();
         } catch (IOException e) {
