@@ -165,6 +165,44 @@
 //            rows.remove().draw(false);
         });
 
+        $('#rewrite').click(function () {
+            var rows = table.rows('.selected');
+            if(rows.data().length == 0){
+                alert("请选择要编辑的视频");
+                return false;
+            }
+            var isOk = 0;
+            var num = rows.data().length;
+            $('#rewrite').prop('disabled', true);
+            rows.every( function ( rowIdx, tableLoop, rowLoop ) {
+                var d = this.data();
+//                console.log(d);
+                $.ajax({
+                    type: "post",
+                    url: 'http://61.48.40.126:9921/rewrite-association',
+//                    url: 'http://localhost:8080/rewrite-association',
+                    async: true, // 使用异步方式
+                    // 1 需要使用JSON.stringify 否则格式为 a=2&b=3&now=14...
+                    // 2 需要强制类型转换，否则格式为 {"a":"2","b":"3"}
+                    data: JSON.stringify(d),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(data) {
+//                        this.invalidate(); // invalidate the data DataTables has cached for this row
+                        isOk += 1;
+                        if(isOk == num){
+                            alert("请返回主页编辑");
+                            rows.remove().draw(false);
+                            $('#dele').prop('disabled', false);
+                        }
+//                    $('#result').text(data.result);
+                    } // 注意不要在此行增加逗号
+                });
+                this.invalidate(); // invalidate the data DataTables has cached for this row
+            } );
+//            rows.remove().draw(false);
+        });
+
     })
 </script>
 
@@ -191,6 +229,7 @@
 
         <div style="text-align:center;margin:0 auto;">
             <button class="btn btn-default" id="dele" >删除</button>
+            <button class="btn btn-default" id="rewrite" >重写填写</button>
         </div>
     </div>
     <!--</nav>-->

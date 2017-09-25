@@ -248,6 +248,29 @@ public class MeiziaccessApplication  {
 		return map;
 	}
 
+	//重新编辑
+	@RequestMapping(value = "/rewrite-association", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> rewriteAssociation (@RequestBody UploadItem item, HttpServletRequest request){
+		Map<String, Object> map = new HashedMap();
+		if (item == null){
+			map.put("status", false);
+			return map;
+		}
+		List<UploadItem> list = new ArrayList<>();
+		list.add(item);
+		for (int i=0;i<list.size();i++){
+			list.get(i).setInform("");
+			list.get(i).setPrice(0);
+			list.get(i).setPrice_type(0);
+			list.get(i).setStatus(0);
+			list.get(i).setToken(0);
+//			u.inform=NULL , u.price=0, u.price_type=0, u.status=0, u.token=0 ;
+			uploadRepository.save(list.get(i));
+		}
+		map.put("status",true);
+		return map;
+	}
 
 	//已上传页面数据
 	@RequestMapping( "/upload_audit_data" )
@@ -329,32 +352,48 @@ public class MeiziaccessApplication  {
 	public Map<String, Object> soldDel(@RequestBody UploadItem item){
 		Map<String, Object> map = new HashedMap();
 		List<UploadItem> list = new ArrayList<>();
+		UploadToolInterface tool = new UploadTool();
 		list.add(item);
 
 		for (int i=0;i<list.size();i++){
-			uploadRepository.delMd5(list.get(i).getMd5());
+//			uploadRepository.delMd5(list.get(i).getMd5());
+			List<UploadItem> list2 = uploadRepository.findByMd5(list.get(i).getMd5());
+			uploadRepository.delete(list2);
+			UploadItem item1 = list2.get(0);
+			tool.deleteItemDirsAssociation(item1);
 		}
-		UploadToolInterface tool = new UploadTool();
+
 
 		//获取到要删除的素材信息，进行删除
-		tool.deleteItemDirsAssociation(item);
+
 		map.put("status", true);
 		return map;
 	}
 
-	@RequestMapping(value = "/sold_out_return", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> soldReturn(@RequestBody UploadItem item){
-		Map<String, Object> map = new HashedMap();
-		//改变的有inform审核意见、price价格、price_type、status上传状态、token审核状态
-		List<UploadItem> list = new ArrayList<>();
-		list.add(item);
- 		for (int i=0;i<list.size();i++){
-
-			uploadRepository.updataBymd5(list.get(i).getMd5());
-		}
-		map.put("status",true);
-		return map;
-	}
+//  与重新编辑API相同
+//	@RequestMapping(value = "/sold_out_return", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String, Object> soldReturn(@RequestBody UploadItem item){
+//		Map<String, Object> map = new HashedMap();
+//		//改变的有inform审核意见、price价格、price_type、status上传状态、token审核状态
+//		if (item==null){
+//			map.put("status", false);
+//			return map;
+//		}
+//		List<UploadItem> list = new ArrayList<>();
+//		list.add(item);
+// 		for (int i=0;i<list.size();i++){
+//
+//			list.get(i).setInform("");
+//			list.get(i).setPrice(0);
+//			list.get(i).setPrice_type(0);
+//			list.get(i).setStatus(0);
+//			list.get(i).setToken(0);
+////			u.inform=NULL , u.price=0, u.price_type=0, u.status=0, u.token=0 ;
+//			uploadRepository.save(list.get(i));
+//		}
+//		map.put("status",true);
+//		return map;
+//	}
 
 }
