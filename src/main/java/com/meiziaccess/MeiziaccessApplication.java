@@ -260,13 +260,14 @@ public class MeiziaccessApplication  {
 		List<UploadItem> list = new ArrayList<>();
 		list.add(item);
 		for (int i=0;i<list.size();i++){
-			list.get(i).setInform("");
-			list.get(i).setPrice(0);
-			list.get(i).setPrice_type(0);
-			list.get(i).setStatus(0);
-			list.get(i).setToken(0);
+			List<UploadItem> list2 = uploadRepository.findByMd5(list.get(i).getMd5());
+			list2.get(0).setInform("");
+			list2.get(0).setPrice(0);
+			list2.get(0).setPrice_type(0);
+			list2.get(0).setStatus(0);
+			list2.get(0).setToken(0);
 //			u.inform=NULL , u.price=0, u.price_type=0, u.status=0, u.token=0 ;
-			uploadRepository.save(list.get(i));
+			uploadRepository.save(list2.get(0));
 		}
 		map.put("status",true);
 		return map;
