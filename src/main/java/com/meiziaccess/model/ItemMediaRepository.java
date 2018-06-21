@@ -11,4 +11,6 @@ public interface ItemMediaRepository extends JpaRepository<ItemMedia, Long> {
     List<ItemMedia> findByOrderidAndUuid(Long orderid, Long uuid);
 
     List<ItemMedia> findMediaByOrderid(Long orderid);
+
+    List<ItemMedia> findMediaByUuid(Long  uuid);
 }

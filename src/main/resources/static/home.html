@@ -19,7 +19,7 @@
     //    });
     $(document).ready(function(){
         var table = $('#upload_data').DataTable({
-            ajax: "http://61.48.40.126:9921/data-source-association",
+            ajax: "/data-source-association",
 //            ajax: "http://localhost:8080/data-source-association",
             columns:[
                 { data: 'upload'},
@@ -43,7 +43,7 @@
                 },
                 {
                     "targets": 2,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "price_type",
                     "render": function ( data, type, full, meta) {
                         return '<select class="form-control" name="price_type"> \
@@ -54,7 +54,7 @@
                 },
                 {
                     "targets": 3,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "price",
                     "render": function ( data, type, full, meta) {
                         return '<input type="text" class="form-control" placeholder="价格(单位/元)" name="price">';
@@ -62,7 +62,7 @@
                 },
                 {
                     "targets": 4,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "material_type",
                     "render": function ( data, type, full, meta) {
                         return '<select name= "material_type" class="form-control" id="material_type"> \
@@ -72,7 +72,7 @@
                     }
                 },{
                     "targets": 5,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "copyright_type",
                     "render": function ( data, type, full, meta) {
                         return '<select name= "copyright_type" class="form-control" id="copyright_type"> \
@@ -83,7 +83,7 @@
                 },
                 {
                     "targets": 6,
-                    "orderable": false,
+                    "orderable": true,
                     "data": "copyright_duration",
                     "render": function ( data, type, full, meta) {
                         return '<select class="form-control" name="copyright_duration" id="copyright_duration"> \
@@ -101,7 +101,7 @@
             order: [
                 [0, null]
             ],
-            paging: false
+            paging: true
         });
 //        $('input').iCheck({
 //            checkboxClass: 'icheckbox_minimal',
@@ -316,9 +316,10 @@
 //            rows.remove().draw(false);
         });
         $('#refresh').click(function () {
+
             $.ajax({
                 type : "post",
-                url : "http://61.48.40.126:9921/data-refresh-association",
+                url : "/data-refresh-association",
                 success:function(data){
                     alert("刷新成功");
                     location.reload();
@@ -371,7 +372,7 @@
 
         <!-- Main component for a primary marketing message or call to action -->
         <div class="jumbotron">
-            <h1>接入服务器</h1>
+            <h1>介入服务器</h1>
             <p></p>
             <p>
                 <a class="btn btn-lg btn-primary" href="http://61.48.40.126:8081/" role="button">媒资平台 &raquo;</a>

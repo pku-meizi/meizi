@@ -12,9 +12,25 @@ angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider, $httpProv
 		templateUrl : 'indent.html',
 		controller : 'indent',
 		controllerAs:'controller',
-	}).when("/end",{
-		templateUrl : 'end.html',
-		controller : 'end',
+	}).when("/upload_audit",{
+		templateUrl : 'upload_audit.html',
+		controller : 'upload_audit',
+		controllerAs:'controller',
+	}).when("/upload_pass",{
+		templateUrl : 'upload_pass.html',
+		controller : 'upload_pass',
+		controllerAs:'controller',
+	}).when("/upload_not_pass",{
+		templateUrl : 'upload_not_pass.html',
+		controller : 'upload_not_pass',
+		controllerAs:'controller',
+	}).when("/correlation",{
+		templateUrl : 'correlation.html',
+		controller : 'correlation',
+		controllerAs:'controller',
+	}).when("/contact",{
+		templateUrl : 'contact.html',
+		controller : 'contact',
 		controllerAs:'controller',
 	}).otherwise('/');
 
@@ -102,7 +118,15 @@ angular.module('hello', [ 'ngRoute' ]).config(function($routeProvider, $httpProv
 
 		}).controller('indent', function($http, $rootScope){
 
-		}).controller('end', function($http, $rootScope){
-			//alert("move to end.html");
+		}).controller('upload_audit', function($http, $rootScope){
+
+        }).controller('upload_pass', function($http, $rootScope){
+
+        }).controller('upload_not_pass', function($http, $rootScope){
+
+		}).controller('correlation', function($http, $rootScope){
+
+		}).controller('contact', function($http, $rootScope){
+
 });
 

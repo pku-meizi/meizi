@@ -1,12 +1,10 @@
 package com.meiziaccess;
 
 import com.meiziaccess.CommandTool.MyHttpUtil;
-import com.meiziaccess.model.*;
+import com.meiziaccess.model.ItemMedia;
+import com.meiziaccess.model.ItemMediaRepository;
 import com.meiziaccess.model.UploadItem;
-import com.meiziaccess.model.UploadItemList;
-import com.meiziaccess.model.UploadObject;
 import com.meiziaccess.model.UploadRepository;
-
 import com.meiziaccess.upload.UploadTool;
 import com.meiziaccess.upload.UploadToolInterface;
 import com.meiziaccess.uploadModel.UploadLogRepository;
@@ -15,33 +13,27 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecgframework.poi.excel.ExcelExportUtil;
 import org.jeecgframework.poi.excel.entity.ExportParams;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.core.env.SystemEnvironmentPropertySource;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Null;
 import java.util.*;
-import com.meiziaccess.secure.*;
 
 
 
 @SpringBootApplication
 @RestController
-@EnableRedisHttpSession
+
 //@EnableScheduling
 public class MeiziaccessApplication  {
 	@Autowired
 	UploadRepository uploadRepository;
 
-	private int vendor_type = 1;
+//	private int vendor_type = 1;
 //登录
 	@RequestMapping(value = "/authenticate")
 	public Map<String, Object> authenticate(HttpServletRequest request){
@@ -62,7 +54,7 @@ public class MeiziaccessApplication  {
 		}else{
 			if(objData.getInt("code") ==  200){
 				model.put("status", true);
-				vendor_type = objData.getInt("data");
+				int vendor_type = objData.getInt("data");
 				System.out.println("session-set-username=" + username);
 				request.getSession().setAttribute("username", username);
 				request.getSession().setAttribute("vendor_type", vendor_type);
@@ -71,6 +63,7 @@ public class MeiziaccessApplication  {
 				model.put("status", false);
 			}
 		}
+		model.put("status", true);
 		return model;
 	}
 
@@ -95,9 +88,19 @@ public class MeiziaccessApplication  {
 	@RequestMapping("/data-source-association")
 	@ResponseBody
 	public Map<String, Object> getItemsAssociation(HttpServletRequest request) {
+
+		// 判断登录没有
+		Object name = request.getSession().getAttribute("username");
 		Map<String, Object> map = new HashMap<>();
-		List<UploadItem> uploadstatus = uploadRepository.findByStatusAndVendor_type(0,vendor_type);
-		map.put("data",uploadstatus);
+		if (name == null){
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
+		}else{
+			Object type = request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(type.toString());
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(0,vendor_type,0);
+			map.put("data",uploadItems);
+		}
 		return map;
 	}
 
@@ -115,7 +118,7 @@ public class MeiziaccessApplication  {
 	public boolean refreshItemsAssociation(HttpServletRequest request) {
 		System.out.println("查找路径 " + upload_local_path);
 		Object o = request.getSession().getAttribute("vendor_type");
-		if (o == null){
+		if (o == null) {
 			return false;
 		}
 		int vendor_type = Integer.parseInt(o.toString());
@@ -128,18 +131,22 @@ public class MeiziaccessApplication  {
 //		map.put("data", list);
 
 		System.out.println("查找后的list数据保存到数据库");
-		System.out.println(list.get(0).getPath());
-		for(int i=0;i<list.size();i++){
+//		System.out.println(list.get(0).getPath());
+		if (list.isEmpty()) {
+			System.out.println("查到的是空");
+		} else{
+			for (int i = 0; i < list.size(); i++) {
 
-			if(uploadRepository.findByTitle(list.get(i).getTitle()).isEmpty()){
-				list.get(i).setUpload_time(new Date());
-				list.get(i).setUpload(true);
-				list.get(i).setVendor_type(vendor_type);
-				uploadRepository.save(list.get(i));
-			}else {
-				System.out.println("有了");
+				if (uploadRepository.findByTitle(list.get(i).getTitle()).isEmpty()) {
+					list.get(i).setUpload_time(new Date());
+					list.get(i).setUpload(true);
+					list.get(i).setVendor_type(vendor_type);
+					uploadRepository.save(list.get(i));
+				} else {
+					System.out.println(list.get(i).getTitle()+"有了");
+				}
 			}
-		}
+	}
 		return true;
 	}
 
@@ -241,15 +248,84 @@ public class MeiziaccessApplication  {
 		return map;
 	}
 
-
-	//已上传页面数据
-	@RequestMapping( "/end_data" )
-	public Map<String, Object> home_end(){
-		List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_type(1, vendor_type);
-		Map<String, Object> map = new HashMap<>();
-		map.put("data",uploadItems);
+	//重新编辑
+	@RequestMapping(value = "/rewrite-association", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> rewriteAssociation (@RequestBody UploadItem item, HttpServletRequest request){
+		Map<String, Object> map = new HashedMap();
+		if (item == null){
+			map.put("status", false);
+			return map;
+		}
+		List<UploadItem> list = new ArrayList<>();
+		list.add(item);
+		for (int i=0;i<list.size();i++){
+			List<UploadItem> list2 = uploadRepository.findByMd5(list.get(i).getMd5());
+			list2.get(0).setInform("");
+			list2.get(0).setPrice(0);
+			list2.get(0).setPrice_type(0);
+			list2.get(0).setStatus(0);
+			list2.get(0).setToken(0);
+//			u.inform=NULL , u.price=0, u.price_type=0, u.status=0, u.token=0 ;
+			uploadRepository.save(list2.get(0));
+		}
+		map.put("status",true);
 		return map;
 	}
+
+	//已上传页面数据
+	@RequestMapping( "/upload_audit_data" )
+	public Map<String, Object> upload_audit(HttpServletRequest request){
+		Object name = request.getSession().getAttribute("username");
+		Map<String, Object> map = new HashMap<>();
+		if(name == null){
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
+		}else {
+			Object o = request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(o.toString());
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 0);
+			//Map<String, Object> map = new HashMap<>();
+			map.put("data", uploadItems);
+		}
+		return map;
+	}
+
+	@RequestMapping("/upload_pass_data")
+	public  Map<String, Object> upload_pass(HttpServletRequest request){
+		Object name = request.getSession().getAttribute("username");
+		Map<String, Object> map = new HashedMap();
+		if (name == null){
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
+		}else {
+			Object o =request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(o.toString());
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 99);
+			map.put("data", uploadItems);
+		}
+
+			return map;
+	}
+
+	@RequestMapping("/upload_not_pass_data")
+	public  Map<String, Object> upload_not_pass(HttpServletRequest request){
+		Object name = request.getSession().getAttribute("username");
+		Map<String, Object> map = new HashedMap();
+		if (name == null){
+			List<UploadItem> uploadItems = new ArrayList<>();
+			map.put("data",uploadItems);
+		}else {
+			Object o =request.getSession().getAttribute("vendor_type");
+			int vendor_type = Integer.parseInt(o.toString());
+			List<UploadItem> uploadItems = uploadRepository.findByStatusAndVendor_typeAndToken(1, vendor_type, 2);
+			map.put("data", uploadItems);
+		}
+
+		return map;
+	}
+
+
 
 	@Autowired
 	ItemMediaRepository itemMediaRepository;
@@ -271,5 +347,54 @@ public class MeiziaccessApplication  {
 		Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), ItemMedia.class, list);
 		workbook.write(response.getOutputStream());
 	}
+
+	@RequestMapping(value = "/sold_out_del", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> soldDel(@RequestBody UploadItem item){
+		Map<String, Object> map = new HashedMap();
+		List<UploadItem> list = new ArrayList<>();
+		UploadToolInterface tool = new UploadTool();
+		list.add(item);
+
+		for (int i=0;i<list.size();i++){
+//			uploadRepository.delMd5(list.get(i).getMd5());
+			List<UploadItem> list2 = uploadRepository.findByMd5(list.get(i).getMd5());
+			uploadRepository.delete(list2);
+			UploadItem item1 = list2.get(0);
+			tool.deleteItemDirsAssociation(item1);
+		}
+
+
+		//获取到要删除的素材信息，进行删除
+
+		map.put("status", true);
+		return map;
+	}
+
+//  与重新编辑API相同
+//	@RequestMapping(value = "/sold_out_return", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String, Object> soldReturn(@RequestBody UploadItem item){
+//		Map<String, Object> map = new HashedMap();
+//		//改变的有inform审核意见、price价格、price_type、status上传状态、token审核状态
+//		if (item==null){
+//			map.put("status", false);
+//			return map;
+//		}
+//		List<UploadItem> list = new ArrayList<>();
+//		list.add(item);
+// 		for (int i=0;i<list.size();i++){
+//
+//			list.get(i).setInform("");
+//			list.get(i).setPrice(0);
+//			list.get(i).setPrice_type(0);
+//			list.get(i).setStatus(0);
+//			list.get(i).setToken(0);
+////			u.inform=NULL , u.price=0, u.price_type=0, u.status=0, u.token=0 ;
+//			uploadRepository.save(list.get(i));
+//		}
+//		map.put("status",true);
+//		return map;
+//	}
 
 }
