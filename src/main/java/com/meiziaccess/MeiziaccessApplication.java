@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +27,7 @@ import java.util.*;
 
 @SpringBootApplication
 @RestController
-@EnableRedisHttpSession
+
 //@EnableScheduling
 public class MeiziaccessApplication  {
 	@Autowired
@@ -64,6 +63,7 @@ public class MeiziaccessApplication  {
 				model.put("status", false);
 			}
 		}
+		model.put("status", true);
 		return model;
 	}
 

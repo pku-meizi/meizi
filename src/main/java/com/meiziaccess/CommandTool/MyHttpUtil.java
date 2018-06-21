@@ -4,17 +4,9 @@ package com.meiziaccess.CommandTool;
  * Created by user-u1 on 2016/12/12.
  */
 import com.meiziaccess.secure.AbstractSecuredController;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +19,7 @@ public class MyHttpUtil {
     /*
         默认的一些参数
     */
-    public static final String ADD_URL = "http://61.48.40.126:8081/clientAppLogin";
+    public static final String ADD_URL = "http://10.2.5.158:8081/clientAppLogin";
     private static final String appid  = "vendor_system";
     private static final String appSecret  = "b62fdc77-3506-49bf-900f-93ac354fd23a";
 
